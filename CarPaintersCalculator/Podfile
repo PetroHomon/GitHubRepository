@@ -1,0 +1,11 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '9.0'
+
+target 'CarPaintersCalculator' do
+  
+
+  # Pods for CarPaintersCalculator
+
+pod 'IQKeyboardManagerSwift', '6.5.0'
+
+end
