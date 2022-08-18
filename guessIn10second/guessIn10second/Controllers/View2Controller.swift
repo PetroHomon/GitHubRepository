@@ -30,22 +30,31 @@ class View2Controller: UIViewController {
     var task = ""
     var image = ""
     var gameBegin = false
-    let controller = View3Controller()
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
        
         tableView.dataSource = self
-        controller.delegate = self
-        
+
         if let results = playersResults {
-            appBrain.sendHowManyPlayers(results.count-1)
-         }
-        player = appBrain.getPlayer()
-        playerReadyLabel.text = "Гравцю \(playersResults![player].name) приготуватися"
+             appBrain.sendHowManyPlayers(results.count-1)
+          }
         
+        if gameBegin {
+            playersResults![player].points += defaults.integer(forKey: "point")
+        }
+        
+        player = appBrain.getPlayer()
+        print(player)
+        playerReadyLabel.text = "Гравцю \(playersResults![player].name) приготуватися"
         defaults.set(0, forKey: "point")
+        
+        
+        
+        gameBegin = true
+        print("VIEWDIDLOAD")
+        tableView.reloadData()
     }
     
     
@@ -55,19 +64,21 @@ class View2Controller: UIViewController {
     
     
     @IBAction func pressedStart(_ sender: UIButton) {
-        self.task = appBrain.loadQuestTask()
-        self.image = appBrain.loadQuestImage()
-        self.performSegue(withIdentifier: "GoToThird", sender: self)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "GoToThird" {
-            let destinatioVC = segue.destination as! View3Controller
-            destinatioVC.playerTask = task
-            destinatioVC.playerImage = image
+        defaults.set(appBrain.loadQuestTask(), forKey: "task")
+        defaults.set(appBrain.loadQuestImage(), forKey: "image")
+        
+        
+        
+        guard let vc = storyboard?.instantiateViewController(withIdentifier: "thirdVC") as? View3Controller else {
+            print("problem with load VC2")
+            return
+            }
+        vc.modalPresentationStyle = .fullScreen
+    present(vc, animated: false)
         }
-    }
 }
+    
+
 
 extension View2Controller: UITableViewDataSource {
 
@@ -80,12 +91,4 @@ extension View2Controller: UITableViewDataSource {
         cell.textLabel?.text = "\(playersResults![indexPath.row].name):   \(playersResults![indexPath.row].points)"
         return cell
     }
-}
-
-extension View2Controller: View2ControllerDelegate {
-    func retturnAfterView3() {
-        print("Delegate methods works")
-    }
-    
-    
 }

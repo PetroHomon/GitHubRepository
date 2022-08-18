@@ -27,8 +27,8 @@ Question(task: "міст", imageName: "city")
     
     mutating func getPlayer() -> Int {
         let p = playerCount
-        if playerCount == numberOfPlayers-1 {
-            playerCount = 1
+        if playerCount == numberOfPlayers {
+            playerCount = 0
         } else {
             playerCount += 1
         }

@@ -8,13 +8,11 @@
 import UIKit
 import AVFoundation
 
-protocol View2ControllerDelegate {
-    func retturnAfterView3()
-}
+
 
 class View3Controller: UIViewController {
 
-    var delegate: View2ControllerDelegate?
+    
     var player: AVAudioPlayer!
      
     @IBOutlet weak var questionLabel: UILabel!
@@ -29,28 +27,29 @@ class View3Controller: UIViewController {
     
     var defaults = UserDefaults.standard
     
-    var playerTask: String?
-    var playerImage: String?
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
         answerCorrect.isHidden = true
         answerIncorect.isHidden = true
-        if let task2 = playerTask {
-        questionLabel.text = "Назвіть 5 \(task2)"
-        
+        if let task = defaults.string(forKey: "task") {
+        questionLabel.text = "Назвіть 5 \(task)"
+        }
+        if let image = defaults.string(forKey: "image") {
+        imageView.image = UIImage(named: image)
         }
         
-        timerLabel.text = ""
-        for number in 1...11 {
+                                  timerLabel.text = ""
+        let time: Int = 6
+        for number in 1...time {
             Timer.scheduledTimer(withTimeInterval: 1 * Double(number), repeats: false) { (timer) in
-                self.timerLabel.text = "< \(11-number) >"
+                self.timerLabel.text = "< \(time-number) >"
             }
         }
-        Timer.scheduledTimer(withTimeInterval: 11, repeats: false) { (timer) in
+        
+        Timer.scheduledTimer(withTimeInterval: Double(time), repeats: false) { (timer) in
             self.answerCorrect.isHidden = false
             self.answerIncorect.isHidden = false
             self.playSound()
@@ -61,14 +60,14 @@ class View3Controller: UIViewController {
 
     @IBAction func pressedCorrect(_ sender: UIButton) {
     defaults.set(1, forKey: "point")
-    delegate?.retturnAfterView3()
-    dismiss(animated: true, completion: nil)
+        self.presentingViewController?.viewDidLoad()
+        dismiss(animated: true, completion: nil)
       
     }
     
     @IBAction func pressedIncorect(_ sender: UIButton) {
-        defaults.set(1, forKey: "point")
-        delegate?.retturnAfterView3()
+        defaults.set(0, forKey: "point")
+        self.presentingViewController?.viewDidLoad()
         dismiss(animated: true, completion: nil)
         
     }
